@@ -72,7 +72,7 @@ class EloquentPostRepository implements PostRepository
             return [];
         }
 
-        $map  = [];
+        $map = [];
         $rows = DB::table('post_likes')
             ->select('post_id')
             ->where('user_id', $userId)
@@ -91,7 +91,7 @@ class EloquentPostRepository implements PostRepository
         return PostComment::create([
             'post_id' => $postId,
             'user_id' => $userId,
-            'body'    => $body,
+            'body' => $body,
         ]);
     }
 

@@ -30,7 +30,7 @@ class User extends Authenticatable
     ];
 
     protected $casts = [
-        'birthdate'         => 'date',
+        'birthdate' => 'date',
         'email_verified_at' => 'datetime',
     ];
 

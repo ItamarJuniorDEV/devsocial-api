@@ -36,7 +36,7 @@ class PostController extends Controller
 
     public function toggleLike(Request $request, int $id): JsonResponse
     {
-        $post  = Post::findOrFail($id);
+        $post = Post::findOrFail($id);
         $liked = $this->posts->toggleLike($post->id, (int) $request->user()->id);
 
         return response()->json(['data' => ['liked' => $liked]]);
@@ -44,7 +44,7 @@ class PostController extends Controller
 
     public function comment(CreateCommentRequest $request, int $id): JsonResponse
     {
-        $post    = Post::findOrFail($id);
+        $post = Post::findOrFail($id);
         $this->authorize('comment', $post);
 
         $comment = $this->posts->comment(

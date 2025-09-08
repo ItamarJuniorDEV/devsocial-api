@@ -18,12 +18,12 @@ class SearchController extends Controller
     public function __invoke(Request $request): JsonResponse
     {
         $request->validate([
-            'q'        => ['required', 'string', 'min:1', 'max:100'],
+            'q' => ['required', 'string', 'min:1', 'max:100'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:50'],
         ]);
 
         $perPage = min(max((int) $request->query('per_page', 10), 1), 50);
-        $result  = $this->search->search(trim($request->query('q')), $perPage);
+        $result = $this->search->search(trim($request->query('q')), $perPage);
 
         $users = [];
         foreach ($result['users']->items() as $user) {
@@ -31,7 +31,7 @@ class SearchController extends Controller
         }
 
         $authId = (int) $request->user()->id;
-        $posts  = [];
+        $posts = [];
 
         foreach ($result['posts']->items() as $post) {
             $post->setAttribute('mine', (int) $post->user_id === $authId);
@@ -47,15 +47,15 @@ class SearchController extends Controller
             'meta' => [
                 'users' => [
                     'current_page' => $result['users']->currentPage(),
-                    'last_page'    => $result['users']->lastPage(),
-                    'per_page'     => $result['users']->perPage(),
-                    'total'        => $result['users']->total(),
+                    'last_page' => $result['users']->lastPage(),
+                    'per_page' => $result['users']->perPage(),
+                    'total' => $result['users']->total(),
                 ],
                 'posts' => [
                     'current_page' => $result['posts']->currentPage(),
-                    'last_page'    => $result['posts']->lastPage(),
-                    'per_page'     => $result['posts']->perPage(),
-                    'total'        => $result['posts']->total(),
+                    'last_page' => $result['posts']->lastPage(),
+                    'per_page' => $result['posts']->perPage(),
+                    'total' => $result['posts']->total(),
                 ],
             ],
         ]);
