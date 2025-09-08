@@ -15,7 +15,7 @@ class FeedService
 
     public function feed(int $authUserId, int $perPage): LengthAwarePaginator
     {
-        $followed  = $this->follows->getFollowedUserIds($authUserId);
+        $followed = $this->follows->getFollowedUserIds($authUserId);
         $paginator = $this->posts->feedForUser($authUserId, $followed, $perPage);
 
         $postIds = [];

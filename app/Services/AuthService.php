@@ -16,8 +16,8 @@ class AuthService
 
     public function register(array $data): array
     {
-        $user  = $this->users->create($data);
-        $token = $user->createToken('auth-token')->plainTextToken;
+        $user = $this->users->create($data);
+        $token = $user->createToken('api')->plainTextToken;
 
         UserRegistered::dispatch($user);
 
@@ -32,7 +32,7 @@ class AuthService
             throw new InvalidCredentialsException();
         }
 
-        $token = $user->createToken('auth-token')->plainTextToken;
+        $token = $user->createToken('api')->plainTextToken;
 
         return ['user' => $user, 'token' => $token];
     }

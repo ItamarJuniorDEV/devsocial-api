@@ -27,8 +27,8 @@ class PostService
 
         $post = $this->posts->create([
             'user_id' => $authUserId,
-            'type'    => $dto->type,
-            'body'    => (string) $body,
+            'type' => $dto->type,
+            'body' => (string) $body,
         ]);
 
         PostCreated::dispatch($post);

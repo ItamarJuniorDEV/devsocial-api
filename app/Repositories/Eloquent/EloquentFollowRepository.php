@@ -21,7 +21,7 @@ class EloquentFollowRepository implements FollowRepository
 
         UserRelation::create([
             'user_from' => $userFromId,
-            'user_to'   => $userToId,
+            'user_to' => $userToId,
         ]);
 
         return true;
@@ -29,7 +29,7 @@ class EloquentFollowRepository implements FollowRepository
 
     public function getFollowedUserIds(int $userFromId): array
     {
-        $ids       = [];
+        $ids = [];
         $relations = UserRelation::where('user_from', $userFromId)->get();
 
         foreach ($relations as $relation) {
