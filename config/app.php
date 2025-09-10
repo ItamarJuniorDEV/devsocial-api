@@ -1,16 +1,16 @@
 <?php
 
 return [
-    'name'            => env('APP_NAME', 'DevSocial'),
-    'env'             => env('APP_ENV', 'production'),
-    'debug'           => (bool) env('APP_DEBUG', false),
-    'url'             => env('APP_URL', 'http://localhost'),
-    'timezone'        => 'UTC',
-    'locale'          => 'pt_BR',
+    'name' => env('APP_NAME', 'DevSocial'),
+    'env' => env('APP_ENV', 'production'),
+    'debug' => (bool) env('APP_DEBUG', false),
+    'url' => env('APP_URL', 'http://localhost'),
+    'timezone' => 'UTC',
+    'locale' => 'pt_BR',
     'fallback_locale' => 'en',
-    'faker_locale'    => 'pt_BR',
-    'key'             => env('APP_KEY'),
-    'cipher'          => 'AES-256-CBC',
+    'faker_locale' => 'pt_BR',
+    'key' => env('APP_KEY'),
+    'cipher' => 'AES-256-CBC',
 
     'providers' => [
         Illuminate\Auth\AuthServiceProvider::class,
@@ -36,6 +36,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Laravel\Sanctum\SanctumServiceProvider::class,
+        L5Swagger\L5SwaggerServiceProvider::class,
         App\Providers\AppServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
