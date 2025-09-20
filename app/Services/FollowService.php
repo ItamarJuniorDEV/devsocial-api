@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Events\UserFollowed;
 use App\Models\UserRelation;
 
 class FollowService
@@ -15,17 +14,15 @@ class FollowService
 
         if ($relation) {
             $relation->delete();
-            $following = false;
-        } else {
-            UserRelation::create([
-                'user_from' => $authUserId,
-                'user_to' => $userId,
-            ]);
-            $following = true;
+
+            return false;
         }
 
-        UserFollowed::dispatch($authUserId, $userId, $following);
+        UserRelation::create([
+            'user_from' => $authUserId,
+            'user_to' => $userId,
+        ]);
 
-        return $following;
+        return true;
     }
 }

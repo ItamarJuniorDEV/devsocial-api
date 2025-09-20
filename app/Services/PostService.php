@@ -2,9 +2,6 @@
 
 namespace App\Services;
 
-use App\Events\PostCommented;
-use App\Events\PostCreated;
-use App\Events\PostLiked;
 use App\Models\Post;
 use App\Models\PostComment;
 use App\Models\PostLike;
@@ -19,15 +16,11 @@ class PostService
             $body = $data['photo']->store('posts', 'public');
         }
 
-        $post = Post::create([
+        return Post::create([
             'user_id' => $authUserId,
             'type' => $data['type'],
             'body' => (string) $body,
         ]);
-
-        PostCreated::dispatch($post);
-
-        return $post;
     }
 
     public function toggleLike(int $postId, int $authUserId): bool
@@ -40,27 +33,21 @@ class PostService
             PostLike::where('post_id', $postId)
                 ->where('user_id', $authUserId)
                 ->delete();
-            $liked = false;
-        } else {
-            PostLike::create(['post_id' => $postId, 'user_id' => $authUserId]);
-            $liked = true;
+
+            return false;
         }
 
-        PostLiked::dispatch($postId, $authUserId, $liked);
+        PostLike::create(['post_id' => $postId, 'user_id' => $authUserId]);
 
-        return $liked;
+        return true;
     }
 
     public function comment(int $postId, int $authUserId, array $data): PostComment
     {
-        $comment = PostComment::create([
+        return PostComment::create([
             'post_id' => $postId,
             'user_id' => $authUserId,
             'body' => $data['body'],
         ]);
-
-        PostCommented::dispatch($comment);
-
-        return $comment;
     }
 }
