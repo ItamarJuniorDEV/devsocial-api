@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Events\UserRegistered;
 use App\Models\User;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Hash;
@@ -14,8 +13,6 @@ class AuthService
     {
         $user = User::create($data);
         $token = $user->createToken('api')->plainTextToken;
-
-        UserRegistered::dispatch($user);
 
         return ['user' => $user, 'token' => $token];
     }
