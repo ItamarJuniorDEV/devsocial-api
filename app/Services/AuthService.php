@@ -3,9 +3,10 @@
 namespace App\Services;
 
 use App\Events\UserRegistered;
-use App\Exceptions\InvalidCredentialsException;
 use App\Models\User;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Timebox;
 
 class AuthService
 {
@@ -21,10 +22,15 @@ class AuthService
 
     public function login(array $credentials): array
     {
-        $user = User::where('email', $credentials['email'])->first();
+        $user = (new Timebox)->call(
+            function (Timebox $timebox) use ($credentials) {
+                return User::where('email', $credentials['email'])->first();
+            },
+            200 * 1000
+        );
 
         if (! $user || ! Hash::check($credentials['password'], $user->password)) {
-            throw new InvalidCredentialsException();
+            throw new AuthenticationException('Credenciais invalidas.');
         }
 
         $token = $user->createToken('api')->plainTextToken;
