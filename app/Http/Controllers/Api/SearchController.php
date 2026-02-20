@@ -8,6 +8,7 @@ use App\Http\Resources\UserResource;
 use App\Services\SearchService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
 class SearchController extends Controller
 {
@@ -15,6 +16,20 @@ class SearchController extends Controller
         private readonly SearchService $search,
     ) {}
 
+    #[OA\Get(
+        path: '/api/search',
+        summary: 'Buscar usuários e posts',
+        security: [['sanctum' => []]],
+        tags: ['Search'],
+        parameters: [
+            new OA\Parameter(name: 'q', in: 'query', required: true, schema: new OA\Schema(type: 'string', minLength: 1, maxLength: 100)),
+            new OA\Parameter(name: 'per_page', in: 'query', required: false, schema: new OA\Schema(type: 'integer', default: 10)),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Resultados da busca'),
+            new OA\Response(response: 422, description: 'Parâmetro q obrigatório'),
+        ]
+    )]
     public function __invoke(Request $request): JsonResponse
     {
         $request->validate([
