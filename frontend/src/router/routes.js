@@ -16,13 +16,13 @@ const routes = [
         meta: { auth: true }
       },
       {
-        path: 'profile/:username',
+        path: 'profile/:id(\\d+)',
         name: 'Profile',
         component: () => import('pages/ProfilePage.vue'),
         meta: { auth: true }
       },
       {
-        path: 'post/:id',
+        path: 'post/:id(\\d+)',
         name: 'Post',
         component: () => import('pages/PostPage.vue'),
         meta: { auth: true }

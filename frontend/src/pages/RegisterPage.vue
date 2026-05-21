@@ -1,22 +1,14 @@
 <template>
-  <q-form @submit.prevent="onSubmit" class="q-gutter-md">
+  <q-form @submit.prevent="onSubmit" class="q-gutter-md" autocomplete="on">
     <q-input
       v-model="form.name"
       :label="$t('auth.name')"
       dark
       filled
+      autocomplete="name"
       :error="!!fieldErrors.name"
       :error-message="fieldErrors.name"
-    />
-    <q-input
-      v-model="form.username"
-      :label="$t('auth.username')"
-      dark
-      filled
-      hint="sem @ e sem espacos"
-      :error="!!fieldErrors.username"
-      :error-message="fieldErrors.username"
-      :rules="[(v) => /^[a-zA-Z0-9_]+$/.test(v) || 'so letras, numeros e _']"
+      :rules="[(v) => (v && v.length >= 3) || 'minimo 3 caracteres']"
     />
     <q-input
       v-model="form.email"
@@ -24,6 +16,7 @@
       :label="$t('auth.email')"
       dark
       filled
+      autocomplete="email"
       :error="!!fieldErrors.email"
       :error-message="fieldErrors.email"
       :rules="[(v) => /.+@.+\..+/.test(v) || 'Email invalido']"
@@ -34,9 +27,10 @@
       :label="$t('auth.password')"
       dark
       filled
+      autocomplete="new-password"
       :error="!!fieldErrors.password"
       :error-message="fieldErrors.password"
-      :rules="[(v) => v.length >= 8 || 'minimo 8 caracteres']"
+      :rules="[(v) => v.length >= 6 || 'minimo 6 caracteres']"
     />
     <q-input
       v-model="form.password_confirmation"
@@ -44,6 +38,7 @@
       :label="$t('auth.passwordConfirmation')"
       dark
       filled
+      autocomplete="new-password"
       :rules="[(v) => v === form.password || 'senhas nao conferem']"
     />
 
@@ -74,7 +69,6 @@ const auth = useAuthStore()
 
 const form = ref({
   name: '',
-  username: '',
   email: '',
   password: '',
   password_confirmation: ''

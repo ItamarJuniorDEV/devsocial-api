@@ -6,15 +6,9 @@
 
         <q-form @submit.prevent="onSave" class="q-gutter-md">
           <q-input v-model="form.name" :label="$t('auth.name')" dark filled />
-          <q-input
-            v-model="form.username"
-            :label="$t('auth.username')"
-            dark
-            filled
-            readonly
-            hint="usuario nao pode ser alterado"
-          />
-          <q-input v-model="form.bio" :label="$t('profile.bio')" type="textarea" autogrow dark filled />
+          <q-input v-model="form.city" label="Cidade" dark filled />
+          <q-input v-model="form.work" label="Trabalho" dark filled />
+          <q-input v-model="form.bio" :label="$t('profile.bio')" type="textarea" autogrow dark filled maxlength="2000" />
 
           <div class="row q-gutter-sm justify-end">
             <q-btn flat :label="$t('common.cancel')" @click="$router.back()" />
@@ -41,20 +35,26 @@ import { notifyError, notifyOk } from 'src/utils/notify'
 const auth = useAuthStore()
 const store = useProfileStore()
 
-const form = ref({ name: '', username: '', bio: '' })
+const form = ref({ name: '', city: '', work: '', bio: '' })
 const saving = ref(false)
 
 onMounted(async () => {
   if (!auth.user) await auth.fetchUser()
   form.value.name = auth.user?.name || ''
-  form.value.username = auth.user?.username || ''
+  form.value.city = auth.user?.city || ''
+  form.value.work = auth.user?.work || ''
   form.value.bio = auth.user?.bio || ''
 })
 
 async function onSave() {
   saving.value = true
   try {
-    await store.updateMe({ name: form.value.name, bio: form.value.bio })
+    await store.updateMe({
+      name: form.value.name,
+      city: form.value.city,
+      work: form.value.work,
+      bio: form.value.bio
+    })
     await auth.fetchUser()
     notifyOk('Perfil atualizado')
   } catch {

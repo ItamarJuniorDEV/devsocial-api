@@ -1,7 +1,7 @@
 <template>
   <q-card flat class="card-surface q-pa-md">
     <q-input
-      v-model="content"
+      v-model="body"
       type="textarea"
       autogrow
       dark
@@ -10,10 +10,10 @@
       maxlength="500"
     />
     <div class="row items-center justify-between q-mt-sm">
-      <div class="text-muted text-caption">{{ content.length }}/500</div>
+      <div class="text-muted text-caption">{{ body.length }}/500</div>
       <q-btn
         color="primary"
-        :disable="!content.trim() || loading"
+        :disable="!body.trim() || loading"
         :loading="loading"
         :label="$t('feed.publish')"
         unelevated
@@ -30,14 +30,14 @@ import { notifyError } from 'src/utils/notify'
 
 const emit = defineEmits(['published'])
 const feed = useFeedStore()
-const content = ref('')
+const body = ref('')
 const loading = ref(false)
 
 async function publish() {
   loading.value = true
   try {
-    await feed.createPost(content.value.trim())
-    content.value = ''
+    await feed.createPost(body.value.trim())
+    body.value = ''
     emit('published')
   } catch (e) {
     notifyError(e.response?.data?.message || 'Falha ao publicar')

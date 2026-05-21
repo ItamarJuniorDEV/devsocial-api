@@ -1,17 +1,19 @@
 <template>
   <q-card flat class="card-surface q-pa-md">
     <div class="row items-center q-gutter-sm">
-      <UserAvatar :user="post.user" size="40px" class="cursor-pointer" @click="$emit('profile', post.user?.username)" />
+      <UserAvatar :user="post.user" size="40px" class="cursor-pointer" @click="$emit('profile', post.user?.id)" />
       <div class="col">
-        <div class="cursor-pointer" @click="$emit('profile', post.user?.username)">
+        <div class="cursor-pointer" @click="$emit('profile', post.user?.id)">
           <b>{{ post.user?.name }}</b>
-          <span class="text-muted q-ml-xs font-mono">@{{ post.user?.username }}</span>
         </div>
         <div class="text-muted text-caption">{{ formatRelative(post.created_at) }}</div>
       </div>
     </div>
 
-    <div class="q-mt-sm" style="white-space: pre-wrap">{{ post.content }}</div>
+    <div v-if="post.type === 'text'" class="q-mt-sm" style="white-space: pre-wrap">{{ post.body }}</div>
+    <div v-else-if="post.type === 'photo' && post.photo_url" class="q-mt-sm">
+      <img :src="post.photo_url" :alt="'post ' + post.id" style="max-width: 100%; border-radius: 8px" />
+    </div>
 
     <div class="row q-mt-md q-gutter-md">
       <q-btn
@@ -20,7 +22,7 @@
         no-caps
         :icon="post.liked ? 'favorite' : 'favorite_border'"
         :color="post.liked ? 'accent' : ''"
-        :label="post.likes_count || 0"
+        :label="String(post.likes_count || 0)"
         @click="$emit('like')"
       />
       <q-btn
@@ -28,7 +30,7 @@
         dense
         no-caps
         icon="chat_bubble_outline"
-        :label="post.comments_count || 0"
+        :label="String(post.comments_count || 0)"
         @click="$emit('open')"
       />
       <q-btn

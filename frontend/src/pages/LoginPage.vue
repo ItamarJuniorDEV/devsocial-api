@@ -1,11 +1,12 @@
 <template>
-  <q-form @submit.prevent="onSubmit" class="q-gutter-md">
+  <q-form @submit.prevent="onSubmit" class="q-gutter-md" autocomplete="on">
     <q-input
       v-model="email"
       type="email"
       :label="$t('auth.email')"
       dark
       filled
+      autocomplete="email"
       lazy-rules
       :rules="[(v) => !!v || 'Obrigatorio', (v) => /.+@.+\..+/.test(v) || 'Email invalido']"
     />
@@ -15,6 +16,7 @@
       :label="$t('auth.password')"
       dark
       filled
+      autocomplete="current-password"
       lazy-rules
       :rules="[(v) => !!v || 'Obrigatorio']"
     />
@@ -52,7 +54,7 @@ async function onSubmit() {
     await auth.login({ email: email.value, password: password.value })
     router.push({ name: 'Feed' })
   } catch (e) {
-    notifyError(e.response?.data?.message || 'Falha ao entrar')
+    notifyError(e.response?.data?.message || 'Email ou senha invalidos')
   }
 }
 </script>

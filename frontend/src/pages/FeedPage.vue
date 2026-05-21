@@ -38,6 +38,7 @@
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useFeedStore } from 'stores/feed'
+import { useProfileStore } from 'stores/profile'
 import PostCard from 'components/PostCard.vue'
 import PostComposer from 'components/PostComposer.vue'
 import PostCardSkeleton from 'components/PostCardSkeleton.vue'
@@ -45,14 +46,23 @@ import EmptyState from 'components/EmptyState.vue'
 
 const router = useRouter()
 const feed = useFeedStore()
+const profile = useProfileStore()
 
-onMounted(() => {
-  if (feed.posts.length === 0) feed.fetchMore()
+onMounted(async () => {
+  if (feed.posts.length === 0) await feed.fetchMore()
+  cacheUsers()
 })
 
 async function onLoad(_index, done) {
   await feed.fetchMore()
+  cacheUsers()
   done(!feed.hasMore)
+}
+
+function cacheUsers() {
+  feed.posts.forEach((p) => {
+    if (p.user) profile.setProfile(p.user)
+  })
 }
 
 function onPublished() {
@@ -63,8 +73,8 @@ function goPost(id) {
   router.push({ name: 'Post', params: { id } })
 }
 
-function goProfile(username) {
-  router.push({ name: 'Profile', params: { username } })
+function goProfile(id) {
+  if (id) router.push({ name: 'Profile', params: { id } })
 }
 </script>
 

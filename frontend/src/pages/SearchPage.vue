@@ -24,7 +24,7 @@
       />
 
       <template v-else>
-        <div v-if="loading">
+        <div v-if="search.loading">
           <PostCardSkeleton v-for="i in 2" :key="i" class="q-mb-md" />
         </div>
 
@@ -46,6 +46,7 @@
               :post="p"
               class="q-mb-md"
               @open="goPost(p.id)"
+              @profile="goProfile"
             />
             <EmptyState v-if="!search.posts.length" icon="article" :title="$t('search.noResults')" />
           </template>
@@ -59,6 +60,7 @@
 import { ref, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSearchStore } from 'stores/search'
+import { useProfileStore } from 'stores/profile'
 import { notifyError } from 'src/utils/notify'
 import PostCard from 'components/PostCard.vue'
 import PostCardSkeleton from 'components/PostCardSkeleton.vue'
@@ -68,10 +70,10 @@ import EmptyState from 'components/EmptyState.vue'
 const route = useRoute()
 const router = useRouter()
 const search = useSearchStore()
+const profile = useProfileStore()
 
 const q = ref(route.query.q || '')
 const tab = ref(route.query.tab || 'users')
-const loading = ref(false)
 let debounceTimer = null
 
 function syncUrl() {
@@ -86,18 +88,15 @@ function onTypeDebounced() {
 async function run() {
   syncUrl()
   if (q.value.length < 2) return
-  loading.value = true
   try {
-    if (tab.value === 'users') await search.searchUsers(q.value)
-    else await search.searchPosts(q.value)
+    await search.search(q.value)
+    search.users.forEach((u) => profile.setProfile(u))
   } catch {
     notifyError('Falha na busca')
-  } finally {
-    loading.value = false
   }
 }
 
-watch(tab, run)
+watch(tab, syncUrl)
 
 onMounted(() => {
   if (q.value.length >= 2) run()
@@ -105,6 +104,10 @@ onMounted(() => {
 
 function goPost(id) {
   router.push({ name: 'Post', params: { id } })
+}
+
+function goProfile(id) {
+  if (id) router.push({ name: 'Profile', params: { id } })
 }
 </script>
 
