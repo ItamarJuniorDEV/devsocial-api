@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Search\SearchRequest;
 use App\Http\Resources\PostResource;
 use App\Http\Resources\UserResource;
 use App\Services\SearchService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
 
 class SearchController extends Controller
@@ -30,15 +30,11 @@ class SearchController extends Controller
             new OA\Response(response: 422, description: 'Parâmetro q obrigatório'),
         ]
     )]
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(SearchRequest $request): JsonResponse
     {
-        $request->validate([
-            'q' => ['required', 'string', 'min:1', 'max:100'],
-            'per_page' => ['nullable', 'integer', 'min:1', 'max:50'],
-        ]);
-
-        $perPage = min(max((int) $request->query('per_page', 10), 1), 50);
-        $result = $this->search->search(trim($request->query('q')), $perPage);
+        $validated = $request->validated();
+        $perPage = min(max((int) ($validated['per_page'] ?? 10), 1), 50);
+        $result = $this->search->search(trim((string) $validated['q']), $perPage);
 
         $users = [];
         foreach ($result['users']->items() as $user) {

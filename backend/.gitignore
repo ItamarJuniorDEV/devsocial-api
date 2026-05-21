@@ -19,6 +19,8 @@
 !/bootstrap/cache/.gitkeep
 /.phpunit.cache
 .phpunit.result.cache
+/database/*.sqlite
+/database/*.sqlite-journal
 /.phpactor.json
 Homestead.json
 Homestead.yaml
