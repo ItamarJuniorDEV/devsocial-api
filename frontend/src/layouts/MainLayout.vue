@@ -27,9 +27,8 @@
           </template>
         </q-input>
         <q-space />
-        <q-btn flat round dense icon="dark_mode" disable />
         <q-btn flat round dense>
-          <q-avatar size="32px">
+          <q-avatar size="32px" color="primary" text-color="dark">
             <span class="font-mono">{{ initials }}</span>
           </q-avatar>
           <q-menu anchor="bottom right" self="top right">
@@ -66,7 +65,7 @@
           <q-item-section avatar><q-icon name="search" /></q-item-section>
           <q-item-section>Buscar</q-item-section>
         </q-item>
-        <q-item clickable v-ripple :to="profileRoute">
+        <q-item v-if="auth.user" clickable v-ripple :to="profileRoute">
           <q-item-section avatar><q-icon name="person" /></q-item-section>
           <q-item-section>Meu perfil</q-item-section>
         </q-item>
@@ -99,13 +98,13 @@ const drawerOpen = ref(false)
 const searchQuery = ref('')
 
 const initials = computed(() => {
-  const name = auth.user?.name || auth.user?.username || '?'
-  return name.substring(0, 1).toUpperCase()
+  const name = auth.user?.name || '?'
+  return name.trim().substring(0, 1).toUpperCase()
 })
 
 const profileRoute = computed(() => {
-  if (!auth.user?.username) return { name: 'Feed' }
-  return { name: 'Profile', params: { username: auth.user.username } }
+  if (!auth.user?.id) return { name: 'Feed' }
+  return { name: 'Profile', params: { id: auth.user.id } }
 })
 
 function goSearch() {
@@ -113,13 +112,13 @@ function goSearch() {
 }
 
 function goProfile() {
-  if (auth.user?.username) {
-    router.push({ name: 'Profile', params: { username: auth.user.username } })
+  if (auth.user?.id) {
+    router.push({ name: 'Profile', params: { id: auth.user.id } })
   }
 }
 
-function logout() {
-  auth.logout()
+async function logout() {
+  await auth.logout()
   router.push({ name: 'Login' })
 }
 </script>

@@ -3,7 +3,6 @@
     <UserAvatar :user="user" size="48px" class="cursor-pointer" @click="goProfile" />
     <div class="col cursor-pointer" @click="goProfile">
       <div><b>{{ user.name }}</b></div>
-      <div class="text-muted font-mono">@{{ user.username }}</div>
       <div v-if="user.bio" class="text-muted text-caption">{{ user.bio }}</div>
     </div>
     <q-btn
@@ -30,7 +29,7 @@ const props = defineProps({
   user: { type: Object, required: true },
   showFollow: { type: Boolean, default: true }
 })
-const emit = defineEmits(['toggle'])
+defineEmits(['toggle'])
 
 const router = useRouter()
 const auth = useAuthStore()
@@ -46,10 +45,10 @@ watch(
 )
 
 const isFollowing = computed(() => localFollowing.value)
-const isSelf = computed(() => auth.user?.username === props.user.username)
+const isSelf = computed(() => auth.user?.id === props.user.id)
 
 function goProfile() {
-  router.push({ name: 'Profile', params: { username: props.user.username } })
+  router.push({ name: 'Profile', params: { id: props.user.id } })
 }
 
 async function toggle() {
@@ -58,8 +57,7 @@ async function toggle() {
   const prev = localFollowing.value
   localFollowing.value = !prev
   try {
-    await store.toggleFollow(props.user.username)
-    emit('toggle', { username: props.user.username, following: !prev })
+    await store.toggleFollow(props.user.id)
   } catch {
     localFollowing.value = prev
     notifyError('Falha ao seguir')

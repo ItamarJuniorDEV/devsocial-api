@@ -4,6 +4,10 @@ import { api } from 'boot/axios'
 
 const TOKEN_KEY = 'devsocial_token'
 
+function unwrap(payload) {
+  return payload?.data ?? payload
+}
+
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(localStorage.getItem(TOKEN_KEY) || null)
   const user = ref(null)
@@ -23,9 +27,10 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(credentials) {
     loading.value = true
     try {
-      const { data } = await api.post('/login', credentials)
-      setToken(data.token || data.access_token)
-      user.value = data.user
+      const { data } = await api.post('/auth/login', credentials)
+      const body = unwrap(data)
+      setToken(body.token)
+      user.value = body.user || null
     } finally {
       loading.value = false
     }
@@ -34,9 +39,10 @@ export const useAuthStore = defineStore('auth', () => {
   async function register(payload) {
     loading.value = true
     try {
-      const { data } = await api.post('/register', payload)
-      setToken(data.token || data.access_token)
-      user.value = data.user
+      const { data } = await api.post('/auth/register', payload)
+      const body = unwrap(data)
+      setToken(body.token)
+      user.value = body.user || null
     } finally {
       loading.value = false
     }
@@ -45,14 +51,22 @@ export const useAuthStore = defineStore('auth', () => {
   async function fetchUser() {
     if (!token.value) return
     try {
-      const { data } = await api.get('/me')
-      user.value = data.user || data
+      const { data } = await api.get('/auth/me')
+      user.value = unwrap(data)
     } catch {
-      logout()
+      setToken(null)
+      user.value = null
     }
   }
 
-  function logout() {
+  async function logout() {
+    if (token.value) {
+      try {
+        await api.post('/auth/logout')
+      } catch {
+        //
+      }
+    }
     setToken(null)
     user.value = null
   }

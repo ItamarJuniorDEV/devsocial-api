@@ -16,13 +16,12 @@ export const useFeedStore = defineStore('feed', () => {
     try {
       const next = page.value + 1
       const { data } = await api.get('/feed', { params: { page: next } })
-      const list = Array.isArray(data) ? data : (data.data || [])
-      const meta = data.meta || {}
-      const lastPage = meta.last_page || meta.lastPage
+      const list = data?.data || []
+      const meta = data?.meta || {}
       posts.value.push(...list)
       page.value = next
-      if (lastPage) {
-        hasMore.value = next < lastPage
+      if (meta.last_page) {
+        hasMore.value = next < meta.last_page
       } else {
         hasMore.value = list.length > 0
       }
@@ -41,9 +40,9 @@ export const useFeedStore = defineStore('feed', () => {
     await fetchMore()
   }
 
-  async function createPost(content) {
-    const { data } = await api.post('/posts', { content })
-    const created = data.data || data
+  async function createPost(body) {
+    const { data } = await api.post('/posts', { type: 'text', body })
+    const created = data?.data || data
     posts.value.unshift(created)
     return created
   }

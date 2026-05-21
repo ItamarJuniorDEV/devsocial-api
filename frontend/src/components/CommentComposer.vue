@@ -25,7 +25,7 @@
 <script setup>
 import { ref } from 'vue'
 
-const props = defineProps({
+defineProps({
   loading: { type: Boolean, default: false }
 })
 const emit = defineEmits(['submit'])
@@ -33,11 +33,9 @@ const emit = defineEmits(['submit'])
 const text = ref('')
 
 function submit() {
-  if (!text.value.trim()) return
-  emit('submit', text.value.trim())
+  const value = text.value.trim()
+  if (!value) return
+  emit('submit', value)
   text.value = ''
 }
-
-// avoid unused warning
-void props
 </script>

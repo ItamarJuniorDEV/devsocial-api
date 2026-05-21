@@ -8,28 +8,14 @@ export const usePostStore = defineStore('post', () => {
   const loading = ref(false)
   const error = ref(null)
 
-  async function fetch(id) {
-    loading.value = true
-    error.value = null
-    current.value = null
-    comments.value = []
-    try {
-      const { data } = await api.get(`/posts/${id}`)
-      current.value = data.data || data.post || data
-      const c = await api.get(`/posts/${id}/comments`)
-      const list = Array.isArray(c.data) ? c.data : (c.data.data || [])
-      comments.value = list
-    } catch (e) {
-      error.value = e
-      throw e
-    } finally {
-      loading.value = false
-    }
+  function setCurrent(post) {
+    current.value = post
+    comments.value = post?.comments || []
   }
 
-  async function addComment(id, content) {
-    const { data } = await api.post(`/posts/${id}/comments`, { content })
-    const created = data.data || data
+  async function addComment(id, body) {
+    const { data } = await api.post(`/posts/${id}/comments`, { body })
+    const created = data?.data || data
     comments.value.push(created)
     if (current.value) {
       current.value.comments_count = (current.value.comments_count || 0) + 1
@@ -52,5 +38,11 @@ export const usePostStore = defineStore('post', () => {
     }
   }
 
-  return { current, comments, loading, error, fetch, addComment, toggleLike }
+  function reset() {
+    current.value = null
+    comments.value = []
+    error.value = null
+  }
+
+  return { current, comments, loading, error, setCurrent, addComment, toggleLike, reset }
 })

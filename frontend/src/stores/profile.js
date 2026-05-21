@@ -7,22 +7,24 @@ export const useProfileStore = defineStore('profile', () => {
   const loading = ref(false)
   const error = ref(null)
 
-  function getProfile(username) {
-    return profiles.value.get(username) || null
+  function getProfile(id) {
+    return profiles.value.get(Number(id)) || null
   }
 
-  function setProfile(username, data) {
-    profiles.value.set(username, data)
+  function setProfile(user) {
+    if (user?.id != null) {
+      profiles.value.set(Number(user.id), user)
+    }
   }
 
-  async function fetchProfile(username) {
+  async function updateMe(payload) {
     loading.value = true
     error.value = null
     try {
-      const { data } = await api.get(`/users/${username}`)
-      const payload = data.data || data.user || data
-      setProfile(username, payload)
-      return payload
+      const { data } = await api.put('/user/profile', payload)
+      const updated = data?.data || data
+      setProfile(updated)
+      return updated
     } catch (e) {
       error.value = e
       throw e
@@ -31,35 +33,23 @@ export const useProfileStore = defineStore('profile', () => {
     }
   }
 
-  async function fetchUserPosts(username) {
-    const { data } = await api.get(`/users/${username}/posts`)
-    return Array.isArray(data) ? data : (data.data || [])
-  }
-
-  async function fetchFollowers(username) {
-    const { data } = await api.get(`/users/${username}/followers`)
-    return Array.isArray(data) ? data : (data.data || [])
-  }
-
-  async function fetchFollowing(username) {
-    const { data } = await api.get(`/users/${username}/following`)
-    return Array.isArray(data) ? data : (data.data || [])
-  }
-
-  async function toggleFollow(username) {
-    const current = getProfile(username)
-    if (!current) return
-    const prev = !!current.is_following
-    const prevCount = current.followers_count || 0
-    current.is_following = !prev
-    current.followers_count = prevCount + (prev ? -1 : 1)
-    try {
-      await api.post(`/users/${username}/follow`)
-    } catch (e) {
-      current.is_following = prev
-      current.followers_count = prevCount
-      throw e
+  async function toggleFollow(userId) {
+    const current = getProfile(userId)
+    if (current) {
+      const prev = !!current.is_following
+      const prevCount = current.followers_count || 0
+      current.is_following = !prev
+      current.followers_count = prevCount + (prev ? -1 : 1)
+      try {
+        await api.post(`/users/${userId}/follow`)
+      } catch (e) {
+        current.is_following = prev
+        current.followers_count = prevCount
+        throw e
+      }
+      return
     }
+    await api.post(`/users/${userId}/follow`)
   }
 
   async function toggleLikeOnList(list, postId) {
@@ -78,20 +68,12 @@ export const useProfileStore = defineStore('profile', () => {
     }
   }
 
-  async function updateMe(payload) {
-    const { data } = await api.put('/me', payload)
-    return data
-  }
-
   return {
     profiles,
     loading,
     error,
     getProfile,
-    fetchProfile,
-    fetchUserPosts,
-    fetchFollowers,
-    fetchFollowing,
+    setProfile,
     toggleFollow,
     toggleLikeOnList,
     updateMe
