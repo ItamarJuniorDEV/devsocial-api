@@ -5,6 +5,3 @@ Thumbs.db
 .vscode/
 *.swp
 *.log
-node_modules/
-.claude/
-.claude-backend-polish/
