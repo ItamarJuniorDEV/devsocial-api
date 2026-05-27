@@ -2,7 +2,7 @@
 
 > API REST em Laravel 10 para uma rede social: perfis, posts, feed, curtidas, comentários, seguidores e busca, com autenticação por token via Sanctum.
 
-![CI](https://github.com/ItamarJuniorDEV/api-devsocial-php/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/ItamarJuniorDEV/devsocial-api/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## Índice
